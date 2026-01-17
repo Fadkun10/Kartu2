@@ -18,12 +18,12 @@
             --dynamic-bg: #121212;
         }
 
-        /* Responsive Variables untuk HP */
+        /* Responsive Variables untuk HP - Dikecilkan agar muat berdampingan */
         @media (max-width: 768px) {
             :root {
-                /* Di HP kartu sedikit lebih kecil relatif terhadap layar, tapi proporsional */
-                --card-width: 55vw; 
-                --card-height: calc(55vw * 1.5);
+                /* Kita pakai 38% lebar layar untuk kartu, sisa 62% untuk margin & teks */
+                --card-width: 38vw; 
+                --card-height: calc(38vw * 1.5);
             }
         }
 
@@ -70,7 +70,7 @@
         /* WELCOME MESSAGE */
         .welcome-message {
             position: absolute;
-            bottom: 15%; /* Naikkan sedikit di HP */
+            bottom: 15%; 
             width: 100%;
             text-align: center;
             z-index: 5;
@@ -126,19 +126,19 @@
             transform-style: preserve-3d; 
         }
 
-        /* DESKTOP DEFAULT: Geser ke kiri saat aktif */
+        /* POSISI SAAT AKTIF (Desktop & Mobile Side-by-Side) */
         .stage.active .card-stack-container {
-            left: 25%; 
+            left: 25%; /* Default Desktop */
             transform: translate(-25%, -50%); 
             animation: none; 
             opacity: 1;
         }
 
-        /* MODE GALERI (CAROUSEL) - Override posisi */
+        /* MODE GALERI (CAROUSEL) */
         .stage.gallery-mode .card-stack-container {
-            left: 50% !important; 
-            top: 40% !important; 
-            transform: translate(-50%, -50%) !important;
+            left: 50%; /* Default Desktop: Center */
+            top: 40%; 
+            transform: translate(-50%, -50%);
             width: 100%; height: 50vh; 
             cursor: grab;
         }
@@ -198,6 +198,12 @@
         .card-icon { font-size: 3rem; margin-bottom: 10px; display: block; }
         .card-name-preview { font-size: 1rem; font-weight: bold; color: #ccc; letter-spacing: 1px; }
 
+        /* HP Adjustment for Card Content */
+        @media (max-width: 768px) {
+            .card-icon { font-size: 2rem; margin-bottom: 5px; }
+            .card-name-preview { font-size: 0.8rem; }
+        }
+
         #coverCard { 
             transform: rotate(0deg) translate(0,0); 
             z-index: 100; 
@@ -223,7 +229,7 @@
             pointer-events: auto;
         }
 
-        /* Shared style for Gallery Mode & Mobile View */
+        /* Info Panel Gallery Mode - Desktop */
         .stage.gallery-mode .info-panel {
             right: auto; top: auto; left: 0; bottom: 5%;
             width: 100%; height: auto;
@@ -267,15 +273,6 @@
             100% { transform: translateX(0) scale(1) rotate(var(--end-rot)); z-index: 200; }
         }
         
-        /* ADJUSTMENT MOBILE ANIMATION - Supaya tidak terbang ke kanan (out screen), tapi ke atas */
-        @media (max-width: 768px) {
-            @keyframes flyToTop {
-                0% { transform: translate(0, 0) scale(1) rotate(var(--start-rot)); z-index: 0; opacity: 1; }
-                50% { transform: translate(0, -50%) scale(1.1) rotate(10deg); z-index: 200; opacity: 1; }
-                100% { transform: translate(0, 0) scale(1) rotate(var(--end-rot)); z-index: 200; }
-            }
-        }
-
         .card.animating { animation: flyToTop 0.6s forwards cubic-bezier(0.175, 0.885, 0.32, 1.275); transition: none; }
 
         /* HINTS */
@@ -295,49 +292,82 @@
         }
 
         /* ---------------------------------------------------- */
-        /* MEDIA QUERIES KHUSUS MOBILE (Layout Fix)             */
+        /* MEDIA QUERIES KHUSUS MOBILE (Side-by-Side Mini)      */
         /* ---------------------------------------------------- */
         @media (max-width: 768px) {
-            /* 1. Posisi Kartu: Pindah ke Tengah Atas (bukan kiri) */
+            
+            /* 1. Posisi Stack: Tetap di Kiri (25%) */
             .stage.active .card-stack-container {
-                left: 50%;
-                top: 38%; /* Geser ke atas supaya muat teks dibawah */
-                transform: translate(-50%, -50%);
+                left: 25% !important;
+                top: 50% !important;
+                transform: translate(-25%, -50%) !important;
             }
 
-            /* 2. Posisi Info Panel: Pindah ke Bawah (Bottom Sheet style) */
-            .info-panel {
-                /* Reset posisi desktop */
-                right: auto; top: auto; left: 0; bottom: 0;
-                transform: translateY(20px); /* Init hidden state */
-                
-                /* Layout Full Width */
-                width: 100%;
-                height: auto;
-                padding: 20px;
-                padding-bottom: 40px;
-                
-                /* Center Alignment */
-                align-items: center;
-                text-align: center;
-                justify-content: flex-end; /* Isi mulai dari bawah */
+            /* 2. Gallery Mode: JANGAN ke tengah, tetap di Kiri (25%) */
+            /* Ini kuncinya agar tidak menutupi teks */
+            .stage.gallery-mode .card-stack-container {
+                left: 25% !important; 
+                width: var(--card-width) !important; /* Batasi lebar agar swipe area tidak menimpa teks */
+                height: 50vh;
+                top: 50% !important;
             }
 
-            /* Saat aktif di mode apapun (Stack atau Gallery), panel ada di bawah */
+            /* 3. Posisi Info Panel: Tetap di Kanan */
+            .info-panel, 
             .stage.active:not(.gallery-mode) .info-panel,
             .stage.gallery-mode .info-panel {
-                transform: translateY(0);
+                /* Reset gaya desktop/gallery umum */
+                top: 50% !important;
+                bottom: auto !important;
+                left: auto !important;
+                right: 2% !important;
+                width: 55% !important; /* Ambil sisa ruang */
+                height: auto !important;
+                
+                transform: translateY(-50%) !important;
+                
+                /* Alignment Text */
+                align-items: flex-start !important; /* Rata kiri (relatif thd box) */
+                text-align: left !important;
+                justify-content: center !important;
+                
+                padding: 0 !important;
+                padding-right: 10px !important;
                 opacity: 1;
-                pointer-events: auto;
-                bottom: 0;
             }
-            
-            /* Adjustment teks agar tidak terlalu besar di HP */
-            .info-title { margin-bottom: 5px; font-size: 1.8rem; }
-            .info-desc { font-size: 0.9rem; max-height: 80px; overflow-y: auto; }
-            
-            /* Swipe hint posisi */
-            .stage.gallery-mode .swipe-hint { bottom: 35vh; }
+
+            /* Text Styling Mini */
+            .info-title { 
+                font-size: 1.4rem !important; 
+                margin-bottom: 5px;
+            }
+            .info-desc { 
+                font-size: 0.75rem !important; 
+                line-height: 1.2;
+                margin-bottom: 10px;
+                /* Batasi baris teks di HP agar tidak terlalu panjang */
+                display: -webkit-box;
+                -webkit-line-clamp: 6;
+                -webkit-box-orient: vertical;
+                overflow: hidden;
+            }
+
+            /* Stat Box lebih kecil dan rata kiri */
+            .stats-box { 
+                justify-content: flex-start !important; 
+                gap: 5px;
+            }
+            .stat { 
+                padding: 4px 8px; 
+                font-size: 0.7rem; 
+            }
+
+            /* Swipe hint positions */
+            .stage.gallery-mode .swipe-hint { 
+                bottom: 15vh; 
+                width: 50%; /* Hanya di area kartu */
+                left: 0;
+            }
         }
     </style>
 </head>
@@ -362,7 +392,7 @@
             </div>
 
             <div class="hint">Klik tumpukan kartu</div>
-            <div class="swipe-hint">↔️ Geser atau Arahkan Mouse</div>
+            <div class="swipe-hint">↔️ Geser</div>
         </div>
 
         <div class="info-panel" id="infoPanel">
@@ -533,8 +563,9 @@
                 if (offset > count / 2) offset -= count;
 
                 // Responsive translation distance
-                const isMobile = window.innerWidth < 600;
-                const dist = isMobile ? 120 : 220;
+                const isMobile = window.innerWidth < 768;
+                // Jika mobile, jarak geser lebih kecil karena kartu di kiri
+                const dist = isMobile ? 80 : 220; 
 
                 const translateX = offset * dist; 
                 const scale = offset === 0 ? 1.1 : 0.85; 
