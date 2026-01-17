@@ -311,25 +311,23 @@
                 transform: translate(-50%, -50%) !important;
             }
 
-            /* 2. Info Panel: Posisi "Menempel" tepat di bawah area kartu */
+            /* 2. Info Panel: "RATA ATAS" (Align Top) mulai tepat di bawah kartu */
             .info-panel {
                 /* Reset posisi desktop */
                 right: auto; left: 0; 
                 width: 100%;
+                
+                /* KUNCI: Container dimulai tepat di tempat kartu berakhir */
+                /* Rumus: 35% (titik tengah kartu) + 0.55 * Tinggi Kartu (setengah tinggi * scale) + sedikit margin */
+                top: calc(35% + (var(--card-height) * 0.55) + 20px);
+                bottom: 0; /* Biarkan memanjang sampai bawah */
+                
                 height: auto;
                 
-                /* KUNCI: Posisikan panel di titik tengah kartu (35%) */
-                top: 35%;
-                bottom: auto; /* Lepaskan dari bawah */
+                /* Hapus padding-top besar yg sebelumnya, ganti padding biasa */
+                padding: 10px 20px;
                 
-                /* Padding atas = (Setengah tinggi kartu * 0.55 untuk scale 1.1) + Jarak 15px */
-                padding-top: calc(var(--card-height) * 0.55 + 15px);
-                
-                padding-bottom: 20px;
-                padding-left: 20px;
-                padding-right: 20px;
-                
-                /* Layout */
+                /* Layout: Start from top */
                 justify-content: flex-start; 
                 align-items: center;
                 text-align: center;
@@ -352,7 +350,7 @@
                 font-size: 0.9rem; 
                 line-height: 1.3;
                 max-width: 100%;
-                /* Batasi tinggi teks karena kartu sekarang lebih naik */
+                /* Area scroll text */
                 max-height: 25vh; 
                 overflow-y: auto; 
             }
