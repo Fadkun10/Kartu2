@@ -556,6 +556,11 @@
                 const dist = isMobile ? 80 : 220;
 
                 const translateX = offset * dist; 
+                
+                // --- FIX: TAMBAHKAN translateZ AGAR MUNDUR ---
+                // Semakin jauh offsetnya, semakin mundur ke belakang (negatif Z)
+                const translateZ = -Math.abs(offset) * 80; 
+
                 const scale = offset === 0 ? 1.1 : 0.85; 
                 const opacity = Math.abs(offset) > 2 ? 0 : 1; 
                 const zIndex = 100 - Math.abs(offset);
@@ -563,11 +568,12 @@
 
                 // Reset tilt transform manual jika bukan active
                 if (offset !== 0) {
-                    card.style.transform = `translateX(${translateX}px) scale(${scale}) perspective(1000px) rotateY(${rotateY}deg)`;
+                    // Masukkan translateZ ke dalam string transform
+                    card.style.transform = `translateX(${translateX}px) translateZ(${translateZ}px) scale(${scale}) perspective(1000px) rotateY(${rotateY}deg)`;
                     card.classList.remove('active-tilt');
                 } else {
-                    // Kartu aktif
-                    card.style.transform = `translateX(${translateX}px) scale(${scale}) perspective(1000px) rotateY(0deg)`;
+                    // Kartu aktif (offset 0, translateZ 0)
+                    card.style.transform = `translateX(${translateX}px) translateZ(0px) scale(${scale}) perspective(1000px) rotateY(0deg)`;
                     card.classList.add('active-tilt');
                     
                     const data = cardsData[card.dataset.id];
