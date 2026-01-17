@@ -302,11 +302,13 @@
         /* MEDIA QUERIES KHUSUS MOBILE (Layout Fix)             */
         /* ---------------------------------------------------- */
         @media (max-width: 768px) {
-            /* 1. Posisi Kartu: Pindah ke Tengah Agak Atas (38% dari tinggi layar) */
-            .stage.active .card-stack-container {
-                left: 50%;
-                top: 38%; 
-                transform: translate(-50%, -50%);
+            /* 1. Posisi Kartu: Pindah ke Tengah Agak Atas (35% dari tinggi layar) */
+            /* Force posisi gallery & active agar sama, memberikan ruang di bawah */
+            .stage.active .card-stack-container,
+            .stage.gallery-mode .card-stack-container {
+                left: 50% !important;
+                top: 35% !important; 
+                transform: translate(-50%, -50%) !important;
             }
 
             /* 2. Info Panel: Posisi "Menempel" tepat di bawah area kartu */
@@ -316,18 +318,19 @@
                 width: 100%;
                 height: auto;
                 
-                /* KUNCI: Posisikan panel di titik tengah kartu (38%), lalu beri padding atas */
-                /* Padding atas = setengah tinggi kartu + sedikit jarak (30px) */
-                top: 38%;
+                /* KUNCI: Posisikan panel di titik tengah kartu (35%) */
+                top: 35%;
                 bottom: auto; /* Lepaskan dari bawah */
-                padding-top: calc(var(--card-height) * 0.5 + 30px);
+                
+                /* Padding atas = (Setengah tinggi kartu * 0.55 untuk scale 1.1) + Jarak 15px */
+                padding-top: calc(var(--card-height) * 0.55 + 15px);
                 
                 padding-bottom: 20px;
                 padding-left: 20px;
                 padding-right: 20px;
                 
                 /* Layout */
-                justify-content: flex-start; /* Mulai isi dari atas (dekat kartu) */
+                justify-content: flex-start; 
                 align-items: center;
                 text-align: center;
                 
@@ -349,8 +352,8 @@
                 font-size: 0.9rem; 
                 line-height: 1.3;
                 max-width: 100%;
-                /* Batasi tinggi teks deskripsi supaya tidak terlalu panjang */
-                max-height: 20vh; /* Sedikit dilonggarkan karena kartu kecil */
+                /* Batasi tinggi teks karena kartu sekarang lebih naik */
+                max-height: 25vh; 
                 overflow-y: auto; 
             }
             
