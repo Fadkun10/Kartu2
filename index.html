@@ -11,11 +11,20 @@
             --text-color: #ffffff;
             --accent-color: #ff4757;
             
-            /* UKURAN RESPONSIF */
-            --card-width: min(240px, 35vw); 
-            --card-height: calc(var(--card-width) * 1.5);
+            /* UKURAN DEFAULT (DESKTOP) */
+            --card-width: 240px; 
+            --card-height: 360px;
             
             --dynamic-bg: #121212;
+        }
+
+        /* Responsive Variables untuk HP */
+        @media (max-width: 768px) {
+            :root {
+                /* Di HP kartu sedikit lebih kecil relatif terhadap layar, tapi proporsional */
+                --card-width: 55vw; 
+                --card-height: calc(55vw * 1.5);
+            }
         }
 
         * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -52,7 +61,7 @@
             width: 100%; height: 100vh; 
             display: flex; align-items: center;
             z-index: 10;
-            perspective: 1200px; /* Perspective ditingkatkan untuk efek 3D */
+            perspective: 1200px; 
             overflow: hidden;
             flex-direction: column; 
             justify-content: center;
@@ -61,7 +70,7 @@
         /* WELCOME MESSAGE */
         .welcome-message {
             position: absolute;
-            bottom: 12%; 
+            bottom: 15%; /* Naikkan sedikit di HP */
             width: 100%;
             text-align: center;
             z-index: 5;
@@ -114,9 +123,10 @@
             animation: openingBounce 1.5s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
             opacity: 0; 
             transition: left 1s cubic-bezier(0.25, 0.8, 0.25, 1), transform 1s cubic-bezier(0.25, 0.8, 0.25, 1), top 1s ease;
-            transform-style: preserve-3d; /* Penting untuk efek 3D anak elemen */
+            transform-style: preserve-3d; 
         }
 
+        /* DESKTOP DEFAULT: Geser ke kiri saat aktif */
         .stage.active .card-stack-container {
             left: 25%; 
             transform: translate(-25%, -50%); 
@@ -124,11 +134,12 @@
             opacity: 1;
         }
 
-        /* MODE GALERI (CAROUSEL) */
+        /* MODE GALERI (CAROUSEL) - Override posisi */
         .stage.gallery-mode .card-stack-container {
-            left: 50%; top: 40%; 
-            transform: translate(-50%, -50%);
-            width: 100%; height: 50vh; /* Area swipe lebih besar */
+            left: 50% !important; 
+            top: 40% !important; 
+            transform: translate(-50%, -50%) !important;
+            width: 100%; height: 50vh; 
             cursor: grab;
         }
         .stage.gallery-mode .card-stack-container:active { cursor: grabbing; }
@@ -149,10 +160,9 @@
             user-select: none;
             transform-style: preserve-3d;
             backface-visibility: hidden;
-            overflow: hidden; /* Agar shine effect tidak keluar */
+            overflow: hidden; 
         }
         
-        /* Efek Shine Holografik */
         .card::after {
             content: "";
             position: absolute;
@@ -172,9 +182,8 @@
             box-shadow: 0 10px 30px rgba(0,0,0,0.5);
         }
         
-        /* Class khusus untuk kartu aktif di Gallery Mode agar bisa dimiringkan JS */
         .stage.gallery-mode .card.active-tilt {
-            transition: transform 0.1s ease-out; /* Sangat cepat untuk mengikuti mouse */
+            transition: transform 0.1s ease-out; 
             z-index: 200 !important;
         }
 
@@ -184,12 +193,11 @@
 
         .card-content { 
             text-align: center; padding: 10px; pointer-events: none; 
-            transform: translateZ(20px); /* Efek pop-out teks */
+            transform: translateZ(20px); 
         }
         .card-icon { font-size: 3rem; margin-bottom: 10px; display: block; }
         .card-name-preview { font-size: 1rem; font-weight: bold; color: #ccc; letter-spacing: 1px; }
 
-        /* Kartu Sampul */
         #coverCard { 
             transform: rotate(0deg) translate(0,0); 
             z-index: 100; 
@@ -198,7 +206,7 @@
             color: white;
         }
 
-        /* INFO PANEL */
+        /* INFO PANEL - DESKTOP DEFAULT */
         .info-panel {
             position: absolute;
             right: 5%; top: 50%;
@@ -215,6 +223,7 @@
             pointer-events: auto;
         }
 
+        /* Shared style for Gallery Mode & Mobile View */
         .stage.gallery-mode .info-panel {
             right: auto; top: auto; left: 0; bottom: 5%;
             width: 100%; height: auto;
@@ -257,6 +266,16 @@
             50% { transform: translateX(120%) translateY(-20%) scale(1.1) rotate(15deg); z-index: 200; opacity: 1; }
             100% { transform: translateX(0) scale(1) rotate(var(--end-rot)); z-index: 200; }
         }
+        
+        /* ADJUSTMENT MOBILE ANIMATION - Supaya tidak terbang ke kanan (out screen), tapi ke atas */
+        @media (max-width: 768px) {
+            @keyframes flyToTop {
+                0% { transform: translate(0, 0) scale(1) rotate(var(--start-rot)); z-index: 0; opacity: 1; }
+                50% { transform: translate(0, -50%) scale(1.1) rotate(10deg); z-index: 200; opacity: 1; }
+                100% { transform: translate(0, 0) scale(1) rotate(var(--end-rot)); z-index: 200; }
+            }
+        }
+
         .card.animating { animation: flyToTop 0.6s forwards cubic-bezier(0.175, 0.885, 0.32, 1.275); transition: none; }
 
         /* HINTS */
@@ -273,6 +292,52 @@
             0%, 20%, 50%, 80%, 100% {transform: translateY(0);}
             40% {transform: translateY(-5px);}
             60% {transform: translateY(-2px);}
+        }
+
+        /* ---------------------------------------------------- */
+        /* MEDIA QUERIES KHUSUS MOBILE (Layout Fix)             */
+        /* ---------------------------------------------------- */
+        @media (max-width: 768px) {
+            /* 1. Posisi Kartu: Pindah ke Tengah Atas (bukan kiri) */
+            .stage.active .card-stack-container {
+                left: 50%;
+                top: 38%; /* Geser ke atas supaya muat teks dibawah */
+                transform: translate(-50%, -50%);
+            }
+
+            /* 2. Posisi Info Panel: Pindah ke Bawah (Bottom Sheet style) */
+            .info-panel {
+                /* Reset posisi desktop */
+                right: auto; top: auto; left: 0; bottom: 0;
+                transform: translateY(20px); /* Init hidden state */
+                
+                /* Layout Full Width */
+                width: 100%;
+                height: auto;
+                padding: 20px;
+                padding-bottom: 40px;
+                
+                /* Center Alignment */
+                align-items: center;
+                text-align: center;
+                justify-content: flex-end; /* Isi mulai dari bawah */
+            }
+
+            /* Saat aktif di mode apapun (Stack atau Gallery), panel ada di bawah */
+            .stage.active:not(.gallery-mode) .info-panel,
+            .stage.gallery-mode .info-panel {
+                transform: translateY(0);
+                opacity: 1;
+                pointer-events: auto;
+                bottom: 0;
+            }
+            
+            /* Adjustment teks agar tidak terlalu besar di HP */
+            .info-title { margin-bottom: 5px; font-size: 1.8rem; }
+            .info-desc { font-size: 0.9rem; max-height: 80px; overflow-y: auto; }
+            
+            /* Swipe hint posisi */
+            .stage.gallery-mode .swipe-hint { bottom: 35vh; }
         }
     </style>
 </head>
@@ -345,21 +410,12 @@
 
         // 1. INIT: Render Kartu ke HTML
         function initCards() {
-            // Render urutan terbalik agar kartu pertama ada di paling bawah tumpukan visual, tapi logika tetap jalan
-            // Namun, untuk efek tumpukan CSS (nth-of-type), kita append biasa.
-            
+            // Render urutan terbalik agar kartu pertama ada di paling bawah tumpukan visual
             cardsData.forEach((data, index) => {
                 const card = document.createElement('div');
                 card.className = 'card';
                 card.dataset.id = index; // simpan index array
                 card.style.borderColor = data.color;
-                
-                // Set posisi acak awal untuk tumpukan (Stack Mode)
-                if (index < 7) {
-                    // Logika CSS nth-of-type simulasi via JS untuk posisi awal
-                    // Kita biarkan CSS menangani posisi awal agar rapi, 
-                    // tapi kita perlu inject elemen sebelum hint/cover
-                }
 
                 card.innerHTML = `
                     <div class="card-content">
@@ -412,9 +468,6 @@
         }
 
         function swapBottomToTop() {
-            // Ambil kartu paling "bawah" secara visual di tumpukan (elemen pertama di DOM Container stack)
-            // Karena kita insertBefore cover, urutan DOM: Card1, Card2... Card7, Cover.
-            // Saat cover hilang, Card1 adalah elemen pertama.
             const allCards = stack.querySelectorAll('.card');
             if(allCards.length === 0) return;
             
@@ -442,7 +495,7 @@
                 bottomCard.classList.remove('animating');
                 bottomCard.style.transform = `rotate(${randomRot}deg) translate(0,0)`; 
                 
-                // Pindahkan elemen DOM ke paling akhir (paling atas tumpukan visual)
+                // Pindahkan elemen DOM ke paling akhir
                 const hintEl = stack.querySelector('.hint') || stack.querySelector('.swipe-hint');
                 if (hintEl) stack.insertBefore(bottomCard, hintEl);
                 else stack.appendChild(bottomCard);
@@ -479,11 +532,15 @@
                 if (offset < 0) offset += count;
                 if (offset > count / 2) offset -= count;
 
-                const translateX = offset * (window.innerWidth < 600 ? 120 : 220); 
+                // Responsive translation distance
+                const isMobile = window.innerWidth < 600;
+                const dist = isMobile ? 120 : 220;
+
+                const translateX = offset * dist; 
                 const scale = offset === 0 ? 1.1 : 0.85; 
                 const opacity = Math.abs(offset) > 2 ? 0 : 1; 
                 const zIndex = 100 - Math.abs(offset);
-                const rotateY = offset * -15; // Rotasi lebih tajam untuk efek 3D
+                const rotateY = offset * -15; 
 
                 // Reset tilt transform manual jika bukan active
                 if (offset !== 0) {
@@ -514,17 +571,15 @@
             if (!activeCard) return;
 
             const rect = activeCard.getBoundingClientRect();
-            const x = e.clientX - rect.left; // posisi mouse relatif thd kartu
+            const x = e.clientX - rect.left; 
             const y = e.clientY - rect.top;
             
             const w = rect.width;
             const h = rect.height;
 
-            // Hitung rotasi (tengah kartu adalah 0)
-            const rotateX = ((y - h/2) / h) * -20; // max tilt 20deg
+            const rotateX = ((y - h/2) / h) * -20; 
             const rotateY = ((x - w/2) / w) * 20;
 
-            // Terapkan transform. Kita perlu mempertahankan scale(1.1) dari carousel
             activeCard.style.transform = `translateX(0px) scale(1.1) perspective(1000px) rotateX(${rotateX}deg) rotateY(${rotateY}deg)`;
         }
 
@@ -553,7 +608,6 @@
             if (!isGalleryMode) return;
             isDragging = true;
             dragStartX = e.type.includes('touch') ? e.touches[0].clientX : e.clientX;
-            // Jangan prevent default di sini agar klik masih bisa dideteksi jika tidak drag
         }
         function handleDragMove(e) { if (!isDragging || !isGalleryMode) return; }
         function handleDragEnd(e) {
@@ -562,7 +616,6 @@
             const endX = e.type.includes('touch') ? e.changedTouches[0].clientX : e.clientX;
             const diff = endX - dragStartX;
             
-            // Threshold drag 50px
             if (Math.abs(diff) > 50) {
                 if (diff > 0) activeIndex--; else activeIndex++;
                 if (activeIndex < 0) activeIndex = cardElements.length - 1;
@@ -576,7 +629,6 @@
             if (!data) return;
             
             const panel = document.getElementById('infoPanel');
-            // Efek kedip saat ganti info
             panel.style.opacity = isGalleryMode ? 0.8 : 0.5;
 
             setTimeout(() => {
@@ -586,7 +638,6 @@
                 infoDef.innerText = data.def;
                 infoTitle.style.color = data.color;
                 
-                // Rarity Badge Logic
                 if(data.rarity) {
                     rarityBadge.style.display = 'flex';
                     rarityBadge.innerText = data.rarity;
